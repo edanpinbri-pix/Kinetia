@@ -8,6 +8,7 @@ import { usePresetStore } from "@/stores/preset-store";
 import { PhysicsEditor } from "@/components/physics-editor/PhysicsEditor";
 import { NLGuidePanel } from "@/components/physics-editor/NLGuidePanel";
 import { PresetCard } from "@/components/preset-card/PresetCard";
+import { FilePreview } from "@/components/file-preview/FilePreview";
 import type { MicroJsonPreset, PhysicsConfig } from "@kinetia/shared-types";
 
 const LAYER_ICONS: Record<string, string> = {
@@ -318,29 +319,13 @@ export default function ProjectWorkspacePage() {
         {/* Col 2: Canvas preview */}
         <div className="flex-1 bg-zinc-950 flex items-center justify-center overflow-hidden relative">
           {active.sourceFileUrl ? (
-            <div className="relative w-full h-full flex flex-col items-center justify-center gap-4">
-              <div className="flex flex-col items-center gap-3 p-8 rounded-2xl border border-surface-border bg-surface-card">
-                <div className="w-16 h-16 rounded-xl bg-brand-950/50 border border-brand-800/40 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-brand-400 uppercase">
-                    {active.sourceFileType ?? "AI"}
-                  </span>
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-medium text-white">Archivo cargado</p>
-                  <p className="text-xs text-zinc-500 mt-0.5">
-                    {active.status === "processing" ? "Detectando capas con IA…" : `${active.layerTree.length} capas detectadas`}
-                  </p>
-                </div>
-                {active.status === "processing" && (
-                  <div className="flex gap-1">
-                    {[0,1,2].map(i => (
-                      <span key={i} className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div className="relative w-full h-full">
+              <FilePreview
+                url={active.sourceFileUrl}
+                fileType={active.sourceFileType ?? "ai"}
+              />
               {selectedLayer && (
-                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 glass rounded-lg px-3 py-1.5">
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 glass rounded-lg px-3 py-1.5 z-10">
                   <p className="text-xs text-brand-400">
                     Selected: <strong>{selectedLayer.name}</strong>
                   </p>
