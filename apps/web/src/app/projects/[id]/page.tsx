@@ -76,6 +76,7 @@ export default function ProjectWorkspacePage() {
   const [exporting, setExporting] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     void loadProject();
@@ -121,7 +122,8 @@ export default function ProjectWorkspacePage() {
     const ext = file.name.split(".").pop();
     const path = `files/${user.id}/${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("kinetia-uploads").upload(path, file, { contentType: file.type });
-    if (error) { setUploadingFile(false); return; }
+    if (error) { setUploadingFile(false); setUploadError(error.message); return; }
+    setUploadError(null);
 
     const { data: { publicUrl } } = supabase.storage.from("kinetia-uploads").getPublicUrl(path);
 
@@ -270,6 +272,7 @@ export default function ProjectWorkspacePage() {
           {active.layerTree.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
               <p className="text-xs text-zinc-500 mb-3">Upload PSD or AI file</p>
+              {uploadError && <p className="text-xs text-red-400 mb-2">{uploadError}</p>}
               <label className="cursor-pointer text-xs bg-surface-card hover:bg-surface-elevated border border-surface-border text-zinc-300 px-3 py-1.5 rounded-lg transition-colors">
                 {uploadingFile ? "Uploading…" : "Browse file"}
                 <input
