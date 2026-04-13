@@ -79,8 +79,8 @@ export function FilePreview({ url, fileType }: FilePreviewProps) {
     async function renderAi() {
       // AI files are PDF-based — use pdfjs-dist
       const pdfjsLib = await import("pdfjs-dist");
-      // Use CDN worker to avoid bundling issues
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+      // Serve worker locally from public/ — no CDN dependency
+      pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
       const loadingTask = pdfjsLib.getDocument({ url, withCredentials: false });
       const pdf = await loadingTask.promise;
