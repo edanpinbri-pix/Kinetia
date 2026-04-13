@@ -380,7 +380,7 @@ export default function ProjectWorkspacePage() {
                 {presetTab === "physics" && (
                   assignedPreset ? (
                     <PhysicsEditor
-                      physics={selectedLayer.overrides ?? assignedPreset.physics}
+                      physics={{ ...assignedPreset.physics, ...selectedLayer.overrides }}
                       onChange={(p) => void handlePhysicsChange(p)}
                       disabled={!layerMappingId}
                     />
@@ -394,7 +394,7 @@ export default function ProjectWorkspacePage() {
                 {presetTab === "guide" && (
                   assignedPreset && layerMappingId ? (
                     <NLGuidePanel
-                      currentPhysics={selectedLayer.overrides ?? assignedPreset.physics}
+                      currentPhysics={{ ...assignedPreset.physics, ...selectedLayer.overrides }}
                       layerMappingId={layerMappingId}
                       onApplied={(p) => void handlePhysicsChange(p)}
                     />
