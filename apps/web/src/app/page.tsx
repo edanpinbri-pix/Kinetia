@@ -124,7 +124,7 @@ export default function HomePage() {
         className="border-t border-surface-border px-8 py-20 min-h-screen flex items-center"
       >
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16 w-full">
-          <div className="flex-1 text-left max-w-sm">
+          <div className="flex-1 text-left max-w-sm relative z-20">
             <p className="text-xs font-medium text-brand-400 uppercase tracking-widest mb-4">Funciones</p>
             <h2 className="font-quinque text-2xl text-white leading-snug mb-4">
               Todo lo que necesitas para animar mejor
@@ -133,7 +133,7 @@ export default function HomePage() {
               Del video de referencia al export en After Effects — Kinetia maneja todo el pipeline de movimiento con IA en cada paso.
             </p>
           </div>
-          <div className="flex-1 flex justify-center w-full">
+          <div className="flex-1 flex justify-center w-full overflow-hidden">
             <FeaturesCarousel />
           </div>
         </div>
