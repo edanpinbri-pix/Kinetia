@@ -24,7 +24,7 @@ enabled = true
 [auth]
 enabled = true
 site_url = "https://kinetiawebapp.netlify.app"
-additional_redirect_urls = ["https://kinetiawebapp.netlify.app/reset-password"]
+additional_redirect_urls = ["https://kinetiawebapp.netlify.app/reset-password", "https://kinetiawebapp.netlify.app/auth/callback"]
 jwt_expiry = 3600
 enable_signup = true
 
