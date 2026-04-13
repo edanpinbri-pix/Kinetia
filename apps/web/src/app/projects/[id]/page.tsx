@@ -136,8 +136,12 @@ export default function ProjectWorkspacePage() {
 
     // Call parse-layers edge function to detect layers with AI
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const { data: fnData, error: fnError } = await supabase.functions.invoke("parse-layers", {
-        headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! },
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          Authorization: `Bearer ${session?.access_token}`,
+        },
         body: { projectId: id, fileUrl: publicUrl, fileType: ext === "ai" ? "ai" : "psd" },
       });
       if (fnError) throw fnError;
@@ -314,12 +318,27 @@ export default function ProjectWorkspacePage() {
         {/* Col 2: Canvas preview */}
         <div className="flex-1 bg-zinc-950 flex items-center justify-center overflow-hidden relative">
           {active.sourceFileUrl ? (
-            <div className="relative w-full h-full flex flex-col">
-              <iframe
-                src={active.sourceFileUrl}
-                className="flex-1 w-full border-0"
-                title="File preview"
-              />
+            <div className="relative w-full h-full flex flex-col items-center justify-center gap-4">
+              <div className="flex flex-col items-center gap-3 p-8 rounded-2xl border border-surface-border bg-surface-card">
+                <div className="w-16 h-16 rounded-xl bg-brand-950/50 border border-brand-800/40 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-brand-400 uppercase">
+                    {active.sourceFileType ?? "AI"}
+                  </span>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-white">Archivo cargado</p>
+                  <p className="text-xs text-zinc-500 mt-0.5">
+                    {active.status === "processing" ? "Detectando capas con IA…" : `${active.layerTree.length} capas detectadas`}
+                  </p>
+                </div>
+                {active.status === "processing" && (
+                  <div className="flex gap-1">
+                    {[0,1,2].map(i => (
+                      <span key={i} className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                    ))}
+                  </div>
+                )}
+              </div>
               {selectedLayer && (
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 glass rounded-lg px-3 py-1.5">
                   <p className="text-xs text-brand-400">
