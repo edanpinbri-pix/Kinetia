@@ -1,7 +1,7 @@
 [build]
-  base    = "apps/web"
-  command = "pnpm build"
-  publish = ".next"
+  base    = "/"
+  command = "pnpm install && pnpm --filter @kinetia/web build"
+  publish = "apps/web/.next"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
