@@ -122,6 +122,9 @@ export default function TrainPage() {
 
       // 5. Call Edge Function
       const { error: fnError } = await supabase.functions.invoke("analyze-video", {
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        },
         body: {
           frames,
           frameCount: frames.length,
