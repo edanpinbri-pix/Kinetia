@@ -68,6 +68,10 @@ export default function HomePage() {
         </div>
 
         <div className="flex gap-3 items-center">
+          <Link href="/login" className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors">
+            Iniciar sesión
+          </Link>
+          <span className="w-px h-4 bg-surface-border hidden md:block" />
           <nav className="hidden md:flex items-center gap-1">
             <Link href="/train" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
               <span className="text-zinc-600 mr-1">1.</span>Entrenar
@@ -75,12 +79,10 @@ export default function HomePage() {
             <Link href="/presets" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
               <span className="text-zinc-600 mr-1">2.</span>Presets
             </Link>
+            <Link href="/projects" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
+              <span className="text-zinc-600 mr-1">3.</span>Studio
+            </Link>
           </nav>
-          <span className="w-px h-4 bg-surface-border hidden md:block" />
-          <Link href="/login" className="text-sm text-zinc-400 hover:text-white transition-colors px-3 py-1.5">Iniciar sesión</Link>
-          <Link href="/projects" className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors">
-            <span className="text-brand-300 mr-1 text-xs">3.</span>Studio
-          </Link>
         </div>
       </nav>
 
