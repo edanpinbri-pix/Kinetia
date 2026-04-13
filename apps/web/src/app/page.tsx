@@ -1,13 +1,5 @@
 import Link from "next/link";
-
-const FEATURES = [
-  { icon: "🧠", title: "Learn from references", description: "Upload MP4 videos — Kinetia extracts the motion skeleton using Claude Vision. Easing, velocity, bounce — not pixels." },
-  { icon: "⚡", title: "Physics-driven presets", description: "Every preset is a mathematical description of motion. Apply it to any PSD layer and the physics engine handles the rest." },
-  { icon: "🎯", title: "Natural language control", description: 'Tell Kinetia "make it softer and floatier" — the AI translates your words into precise physics modifier changes.' },
-  { icon: "📐", title: "Smart layer mapping", description: "Kinetia reads your PSD/AI hierarchy and automatically matches presets to the right layer types." },
-  { icon: "🎬", title: "Export to After Effects", description: "One-click export generates a fully editable AE project with live text, editable vectors, and injected expressions." },
-  { icon: "🔌", title: "Native AE plugin", description: "Import Kinetia packages directly into After Effects and fine-tune physics without breaking the animation." },
-];
+import { FeaturesCarousel } from "@/components/features-carousel/FeaturesCarousel";
 
 export default function HomePage() {
   return (
@@ -22,6 +14,7 @@ export default function HomePage() {
         </div>
       </nav>
 
+      {/* Hero */}
       <section className="flex-1 flex flex-col items-center justify-center text-center px-8 py-24">
         <div className="max-w-3xl mx-auto animate-fade-in">
           <div className="inline-flex items-center gap-2 text-xs font-medium text-brand-400 bg-brand-950/50 border border-brand-900 rounded-full px-3 py-1 mb-8">
@@ -49,15 +42,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-surface-border px-8 py-16">
-        <div className="max-w-6xl mx-auto grid-12">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="col-span-12 md:col-span-4 glass rounded-xl p-6">
-              <div className="text-2xl mb-3">{f.icon}</div>
-              <h3 className="font-semibold text-white mb-2">{f.title}</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed">{f.description}</p>
-            </div>
-          ))}
+      {/* Features carousel */}
+      <section className="border-t border-surface-border px-8 py-20">
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+          {/* Left: text */}
+          <div className="flex-1 text-left max-w-sm">
+            <p className="text-xs font-medium text-brand-400 uppercase tracking-widest mb-4">Features</p>
+            <h2 className="font-quinque text-2xl text-white leading-snug mb-4">
+              Everything you need to animate smarter
+            </h2>
+            <p className="text-sm text-zinc-400 leading-relaxed">
+              From reference video to After Effects export — Kinetia handles the full motion pipeline with AI at every step.
+            </p>
+          </div>
+
+          {/* Right: carousel */}
+          <div className="flex-1 flex justify-center w-full">
+            <FeaturesCarousel />
+          </div>
         </div>
       </section>
     </main>
