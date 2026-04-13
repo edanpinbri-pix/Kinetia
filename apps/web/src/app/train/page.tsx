@@ -81,7 +81,9 @@ export default function TrainPage() {
       setStatus("extracting");
 
       // 3. Extract frames in browser
-      const frames = await extractFrames(file, 12);
+      const rawFrames = await extractFrames(file, 12);
+      const frames = rawFrames.filter((f) => f && f.length > 100);
+      if (!frames.length) throw new Error("No se pudieron extraer frames del video");
       setProgress(45);
       setStatus("analyzing");
 

@@ -115,9 +115,13 @@ Deno.serve(async (req) => {
       .eq("id", jobId);
 
     // Build Claude Vision message — send up to 10 frames (API limit aware)
-    const maxFrames = Math.min(frames.length, 10);
-    const step = Math.max(1, Math.floor(frames.length / maxFrames));
-    const selectedFrames = frames.filter((_, i) => i % step === 0).slice(0, maxFrames);
+    const validFrames = frames.filter((f) => f && f.length > 100);
+    if (!validFrames.length) {
+      return Response.json({ error: "No valid frames extracted from video" }, { status: 400 });
+    }
+    const maxFrames = Math.min(validFrames.length, 10);
+    const step = Math.max(1, Math.floor(validFrames.length / maxFrames));
+    const selectedFrames = validFrames.filter((_, i) => i % step === 0).slice(0, maxFrames);
 
     const imageBlocks = selectedFrames.map((base64) => ({
       type: "image" as const,
