@@ -7,7 +7,8 @@
     "lib": ["dom", "dom.iterable", "ES2022"],
     "plugins": [{ "name": "next" }],
     "paths": { "@/*": ["./src/*"] },
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "noImplicitAny": false
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

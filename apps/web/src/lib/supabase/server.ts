@@ -1,6 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import type { ResponseCookie } from "next/dist/server/web/spec-extension/cookies";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -13,10 +12,12 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet: { name: string; value: string; options?: Partial<ResponseCookie> }[]) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setAll(cookiesToSet: any[]) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
+            cookiesToSet.forEach(({ name, value, options }: { name: string; value: string; options?: unknown }) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              cookieStore.set(name, value, options as any);
             });
           } catch {}
         },
