@@ -115,32 +115,46 @@ export default function ProjectWorkspacePage() {
   async function handleFileUpload(file: File) {
     if (!active) return;
     setUploadingFile(true);
+    setUploadError(null);
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setUploadingFile(false); return; }
 
-    const ext = file.name.split(".").pop();
+    const ext = (file.name.split(".").pop() ?? "").toLowerCase();
     const path = `files/${user.id}/${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("kinetia-uploads").upload(path, file, { contentType: file.type });
     if (error) { setUploadingFile(false); setUploadError(error.message); return; }
-    setUploadError(null);
 
     const { data: { publicUrl } } = supabase.storage.from("kinetia-uploads").getPublicUrl(path);
 
-    // Update project record
+    // Save file URL first
     await supabase.from("projects").update({
       source_file_url: publicUrl,
       source_file_type: ext === "ai" ? "ai" : "psd",
-      status: "ready",
-      // Placeholder layer tree — real parsing would call an Edge Function
-      layer_tree: [
-        { id: "bg", name: "Background", type: "image" },
-        { id: "headline", name: "Headline", type: "text" },
-        { id: "subline", name: "Subheadline", type: "text" },
-        { id: "logo", name: "Logo", type: "vector" },
-        { id: "cta", name: "CTA Button", type: "shape" },
-      ],
+      status: "processing",
     }).eq("id", id);
+
+    // Call parse-layers edge function to detect layers with AI
+    try {
+      const { data: fnData, error: fnError } = await supabase.functions.invoke("parse-layers", {
+        headers: { apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! },
+        body: { projectId: id, fileUrl: publicUrl, fileType: ext === "ai" ? "ai" : "psd" },
+      });
+      if (fnError) throw fnError;
+      console.log("[parse-layers] detected layers:", fnData);
+    } catch (err) {
+      // Fallback: basic layer tree if AI parsing fails
+      await supabase.from("projects").update({
+        layer_tree: [
+          { id: "bg", name: "Background", type: "image" },
+          { id: "headline", name: "Headline", type: "text" },
+          { id: "logo", name: "Logo", type: "vector" },
+          { id: "cta", name: "CTA Button", type: "shape" },
+        ],
+        status: "ready",
+      }).eq("id", id);
+      console.error("[parse-layers] fallback:", err);
+    }
 
     setUploadingFile(false);
     void loadProject();
