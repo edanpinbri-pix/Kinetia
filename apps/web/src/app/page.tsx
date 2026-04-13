@@ -13,7 +13,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen flex flex-col">
       <nav className="border-b border-surface-border px-8 py-4 flex items-center justify-between">
-        <span className="text-xl font-semibold tracking-tight text-gradient">Kinetia</span>
+        <span className="font-quinque text-xl text-gradient">Kinetia</span>
         <div className="flex gap-3 items-center">
           <Link href="/presets" className="text-sm text-zinc-400 hover:text-white transition-colors px-3 py-1.5">Presets</Link>
           <Link href="/train"   className="text-sm text-zinc-400 hover:text-white transition-colors px-3 py-1.5">Train</Link>
@@ -28,7 +28,7 @@ export default function HomePage() {
             <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse-slow" />
             AI-powered motion design
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-none mb-6">
+          <h1 className="font-quinque text-5xl md:text-7xl tracking-tight leading-none mb-6">
             <span className="text-white">Animate</span>{" "}
             <span className="text-gradient">at the speed</span>
             <br />

@@ -6,7 +6,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-lexend)", "system-ui", "sans-serif"],
+        sans:   ["var(--font-lexend)", "system-ui", "sans-serif"],
+        quinque: ["var(--font-quinque)", "monospace"],
       },
       colors: {
         brand: {

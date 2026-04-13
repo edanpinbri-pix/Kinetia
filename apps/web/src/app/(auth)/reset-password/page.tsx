@@ -37,7 +37,7 @@ export default function ResetPasswordPage() {
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <span className="text-2xl font-bold text-gradient">Kinetia</span>
+          <span className="font-quinque text-2xl text-gradient">Kinetia</span>
           <p className="text-sm text-zinc-400 mt-2">Set a new password</p>
         </div>
 

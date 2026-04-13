@@ -9,7 +9,19 @@
   font-display: swap;
 }
 
-:root { --font-lexend: "Lexend", system-ui, sans-serif; }
+@font-face {
+  font-family: "QuinqueFive";
+  src: url("/fonts/QuinqueFive.woff2") format("woff2"),
+       url("/fonts/QuinqueFive.woff") format("woff"),
+       url("/fonts/QuinqueFive.ttf") format("truetype");
+  font-weight: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-lexend: "Lexend", system-ui, sans-serif;
+  --font-quinque: "QuinqueFive", monospace;
+}
 
 @layer base {
   html { font-family: var(--font-lexend); -webkit-font-smoothing: antialiased; }
