@@ -1,0 +1,150 @@
+/* Kinetia AE Panel — Kitifica Dark Style */
+:root {
+  --bg:          #0f1117;
+  --elevated:    #181c27;
+  --card:        #1e2235;
+  --border:      #2a2f47;
+  --muted:       #3a4060;
+  --text:        #ffffff;
+  --text-dim:    #9ca3af;
+  --text-faint:  #4b5563;
+  --brand:       #5f72f0;
+  --brand-hover: #4a55e4;
+  --accent:      #7f96f7;
+  --radius:      6px;
+  --font:        -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.panel { padding: 12px; }
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.logo {
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(to right, #7f96f7, #a5bcfb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.version { font-size: 10px; color: var(--text-faint); }
+
+/* Section */
+.section { margin-bottom: 12px; }
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.hint { font-size: 10px; color: var(--text-faint); margin-bottom: 8px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font);
+  transition: background 0.15s;
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-full { width: 100%; margin-bottom: 6px; }
+.btn-primary  { background: var(--brand); color: white; }
+.btn-primary:hover:not(:disabled) { background: var(--brand-hover); }
+.btn-accent   { background: #1e2a4a; color: var(--accent); border: 1px solid #2a3a5e; }
+.btn-accent:hover:not(:disabled)  { background: #253460; }
+.btn-ghost    { background: var(--card); color: var(--text-dim); border: 1px solid var(--border); }
+.btn-ghost:hover:not(:disabled)   { color: var(--text); }
+
+/* Package info */
+.package-info {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  margin-top: 6px;
+}
+.package-name { display: block; font-weight: 500; color: var(--text); }
+.package-meta { display: block; font-size: 10px; color: var(--text-faint); margin-top: 2px; }
+.hidden { display: none; }
+
+/* Physics sliders */
+.param-row { margin-bottom: 10px; }
+.param-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.param-name { color: var(--text-dim); }
+.param-value { font-family: monospace; color: var(--accent); font-size: 10px; }
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+/* NL prompt */
+.nl-input {
+  width: 100%;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 8px;
+  resize: none;
+  margin-bottom: 6px;
+  transition: border-color 0.15s;
+}
+.nl-input:focus { outline: none; border-color: var(--brand); }
+.nl-input::placeholder { color: var(--text-faint); }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+/* Status bar */
+.status-bar {
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px 8px;
+}
+#status-text { font-size: 10px; color: var(--text-faint); }

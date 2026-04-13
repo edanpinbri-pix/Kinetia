@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Lexend";
+  src: url("/fonts/Lexend/Lexend-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root { --font-lexend: "Lexend", system-ui, sans-serif; }
+
+@layer base {
+  html { font-family: var(--font-lexend); -webkit-font-smoothing: antialiased; }
+  body { @apply bg-surface text-white; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { @apply bg-surface; }
+  ::-webkit-scrollbar-thumb { @apply bg-surface-muted rounded-full; }
+}
+
+@layer utilities {
+  .grid-12 { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 1.5rem; }
+  .glass { @apply bg-surface-card/80 backdrop-blur-md border border-surface-border; }
+  .text-gradient { @apply bg-gradient-to-r from-brand-400 to-brand-300 bg-clip-text text-transparent; }
+}
