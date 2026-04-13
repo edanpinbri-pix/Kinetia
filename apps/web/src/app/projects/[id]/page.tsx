@@ -297,19 +297,22 @@ export default function ProjectWorkspacePage() {
           )}
         </aside>
 
-        {/* Col 2: Canvas preview (placeholder) */}
+        {/* Col 2: Canvas preview */}
         <div className="flex-1 bg-zinc-950 flex items-center justify-center overflow-hidden relative">
           {active.sourceFileUrl ? (
-            <div className="relative w-full h-full flex items-center justify-center">
-              <div className="glass rounded-xl p-6 max-w-sm text-center space-y-2">
-                <p className="text-zinc-400 text-sm">Preview canvas</p>
-                <p className="text-zinc-600 text-xs">PixiJS renderer — coming in Sprint 3</p>
-                {selectedLayer && (
-                  <p className="text-xs text-brand-400 mt-2">
+            <div className="relative w-full h-full flex flex-col">
+              <iframe
+                src={active.sourceFileUrl}
+                className="flex-1 w-full border-0"
+                title="File preview"
+              />
+              {selectedLayer && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 glass rounded-lg px-3 py-1.5">
+                  <p className="text-xs text-brand-400">
                     Selected: <strong>{selectedLayer.name}</strong>
                   </p>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-center">
