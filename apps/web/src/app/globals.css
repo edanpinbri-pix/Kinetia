@@ -3,28 +3,18 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "Lexend";
-  src: url("/fonts/Lexend/Lexend-VariableFont_wght.ttf") format("truetype");
-  font-weight: 100 900;
-  font-display: swap;
-}
-
-@font-face {
   font-family: "QuinqueFive";
-  src: url("/fonts/QuinqueFive.woff2") format("woff2"),
-       url("/fonts/QuinqueFive.woff") format("woff"),
-       url("/fonts/QuinqueFive.ttf") format("truetype");
+  src: url("/fonts/QuinqueFive.ttf") format("truetype");
   font-weight: normal;
   font-display: swap;
 }
 
 :root {
-  --font-lexend: "Lexend", system-ui, sans-serif;
   --font-quinque: "QuinqueFive", monospace;
 }
 
 @layer base {
-  html { font-family: var(--font-lexend); -webkit-font-smoothing: antialiased; }
+  html { font-family: var(--font-sans, system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
   body { @apply bg-surface text-white; }
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { @apply bg-surface; }
