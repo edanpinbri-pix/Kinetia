@@ -84,11 +84,10 @@ export default function HomePage() {
             <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse-slow" />
             Diseño de movimiento con IA
           </div>
-          <h1 className="font-quinque text-5xl md:text-7xl tracking-tight leading-none mb-6">
-            <span className="text-white">Anima</span>{" "}
-            <span className="text-gradient">a la velocidad</span>
+          <h1 className="font-quinque text-[clamp(1.8rem,5vw,3.5rem)] tracking-tight leading-tight mb-6">
+            <span className="text-white">Anima a la velocidad</span>
             <br />
-            <span className="text-white">del pensamiento</span>
+            <span className="text-gradient">del pensamiento</span>
           </h1>
           <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-10 leading-relaxed">
             Sube videos de referencia. Kinetia aprende tu estilo de movimiento, genera presets
