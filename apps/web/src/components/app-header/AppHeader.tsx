@@ -31,13 +31,25 @@ export function AppHeader({ title, subtitle, actions }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
+        <nav className="hidden md:flex items-center gap-1">
+          <Link href="/train" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
+            <span className="text-zinc-600 mr-1">1.</span>Entrenar
+          </Link>
+          <Link href="/presets" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
+            <span className="text-zinc-600 mr-1">2.</span>Presets
+          </Link>
+          <Link href="/projects" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
+            <span className="text-zinc-600 mr-1">3.</span>Studio
+          </Link>
+        </nav>
+        <span className="w-px h-4 bg-surface-border hidden md:block" />
         {actions}
         <button
           onClick={() => void handleLogout()}
           className="text-xs text-zinc-500 hover:text-red-400 transition-colors px-3 py-1.5 border border-surface-border hover:border-red-900 rounded-lg"
         >
-          Sign out
+          Salir
         </button>
       </div>
     </div>
