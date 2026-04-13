@@ -13,7 +13,7 @@ export interface LayerNode {
 export interface Project {
   id: string;
   name: string;
-  status: "idle" | "parsing" | "ready" | "exporting";
+  status: "idle" | "parsing" | "processing" | "ready" | "exporting";
   sourceFileUrl?: string;
   sourceFileType?: "psd" | "ai";
   layerTree: LayerNode[];
