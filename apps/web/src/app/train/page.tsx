@@ -121,27 +121,18 @@ export default function TrainPage() {
         .subscribe();
 
       // 5. Call Edge Function
-      const { data: { session } } = await supabase.auth.getSession();
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/analyze-video`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${session?.access_token}`,
-          },
-          body: JSON.stringify({
-            frames,
-            frameCount: frames.length,
-            fps: 30,
-            jobId: job.id,
-            userId: user.id,
-            presetName: presetName || undefined,
-          }),
-        }
-      );
+      const { error: fnError } = await supabase.functions.invoke("analyze-video", {
+        body: {
+          frames,
+          frameCount: frames.length,
+          fps: 30,
+          jobId: job.id,
+          userId: user.id,
+          presetName: presetName || undefined,
+        },
+      });
 
-      if (!response.ok) throw new Error(await response.text());
+      if (fnError) throw fnError;
 
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
