@@ -68,23 +68,11 @@ export default function TrainPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
-      // 1. Upload video to Supabase Storage
+      // 1. Create training job record (skip video upload — frames sent directly to edge fn)
       setProgress(10);
-      const ext = file.name.split(".").pop();
-      const storagePath = `videos/${user.id}/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("kinetia-uploads")
-        .upload(storagePath, file, { contentType: file.type });
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("kinetia-uploads")
-        .getPublicUrl(storagePath);
-
-      // 2. Create training job record
       const { data: job, error: jobError } = await supabase
         .from("training_jobs")
-        .insert({ user_id: user.id, video_url: publicUrl, status: "queued" })
+        .insert({ user_id: user.id, video_url: file.name, status: "queued" })
         .select()
         .single();
       if (jobError) throw jobError;
