@@ -23,8 +23,8 @@ enabled = true
 
 [auth]
 enabled = true
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://kinetia.netlify.app"]
+site_url = "https://kinetiawebapp.netlify.app"
+additional_redirect_urls = ["https://kinetiawebapp.netlify.app/reset-password"]
 jwt_expiry = 3600
 enable_signup = true
 
