@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { AppHeader } from "@/components/app-header/AppHeader";
 
 type JobStatus = "idle" | "extracting" | "analyzing" | "done" | "error";
 
@@ -150,10 +151,7 @@ export default function TrainPage() {
 
   return (
     <main className="min-h-screen bg-surface">
-      <div className="border-b border-surface-border px-8 py-5">
-        <h1 className="text-xl font-semibold text-white">Train AI</h1>
-        <p className="text-sm text-zinc-400 mt-0.5">Upload a reference video to generate a motion preset</p>
-      </div>
+      <AppHeader title="Train AI" subtitle="Upload a reference video to generate a motion preset" />
 
       <div className="max-w-2xl mx-auto px-8 py-12">
         {status === "idle" || status === "error" ? (

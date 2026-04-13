@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { usePresetStore } from "@/stores/preset-store";
+import { AppHeader } from "@/components/app-header/AppHeader";
 import { PresetCard } from "@/components/preset-card/PresetCard";
 import type { MicroJsonPreset, PresetCategory } from "@kinetia/shared-types";
 
@@ -47,16 +48,15 @@ export default function PresetsPage() {
 
   return (
     <main className="min-h-screen bg-surface">
-      {/* Header */}
-      <div className="border-b border-surface-border px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-white">Preset Library</h1>
-          <p className="text-sm text-zinc-400 mt-0.5">{list.length} preset{list.length !== 1 ? "s" : ""}</p>
-        </div>
-        <a href="/train" className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors">
-          + Train new
-        </a>
-      </div>
+      <AppHeader
+        title="Preset Library"
+        subtitle={`${list.length} preset${list.length !== 1 ? "s" : ""}`}
+        actions={
+          <a href="/train" className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors">
+            + Train new
+          </a>
+        }
+      />
 
       <div className="flex h-[calc(100vh-73px)]">
         {/* Sidebar filters */}

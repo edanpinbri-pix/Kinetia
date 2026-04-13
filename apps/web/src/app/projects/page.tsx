@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { AppHeader } from "@/components/app-header/AppHeader";
 import type { Project } from "@/stores/project-store";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -62,7 +63,7 @@ export default function ProjectsPage() {
 
     const { data, error } = await supabase
       .from("projects")
-      .insert({ user_id: user.id, name: newName.trim(), status: "idle", layer_tree: [] })
+      .insert({ user_id: user.id, name: newName.trim(), status: "draft", layer_tree: [] })
       .select("id")
       .single();
 
@@ -76,19 +77,18 @@ export default function ProjectsPage() {
 
   return (
     <main className="min-h-screen bg-surface">
-      {/* Header */}
-      <div className="border-b border-surface-border px-8 py-5 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-white">Projects</h1>
-          <p className="text-sm text-zinc-400 mt-0.5">Your animation projects</p>
-        </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors"
-        >
-          + New project
-        </button>
-      </div>
+      <AppHeader
+        title="Projects"
+        subtitle="Your animation projects"
+        actions={
+          <button
+            onClick={() => setShowModal(true)}
+            className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors"
+          >
+            + New project
+          </button>
+        }
+      />
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-8 py-10">
