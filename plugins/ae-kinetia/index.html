@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' https://evkzqlzjvbvanpidpddl.supabase.co https://fonts.googleapis.com https://fonts.gstatic.com;
+             script-src 'self' 'unsafe-inline';
+             style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+             font-src https://fonts.gstatic.com;
+             connect-src https://evkzqlzjvbvanpidpddl.supabase.co;" />
+  <title>Kinetia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/panel.css" />
+</head>
+<body>
+
+  <!-- ── AUTH VIEW ──────────────────────────────────────────────────────────── -->
+  <div id="view-auth" class="view">
+    <div class="auth-wrap">
+      <span class="auth-logo">Kinetia</span>
+      <p class="auth-subtitle">Inicia sesión con tu cuenta de Kinetia<br/>para acceder a tus presets.</p>
+
+      <form id="login-form" class="auth-form" autocomplete="on">
+        <input
+          id="email"
+          type="email"
+          placeholder="Correo electrónico"
+          autocomplete="email"
+          required
+        />
+        <input
+          id="password"
+          type="password"
+          placeholder="Contraseña"
+          autocomplete="current-password"
+          required
+        />
+        <p id="login-error" style="font-size:10px;color:#ef4444;min-height:14px;"></p>
+        <button id="btn-login" type="submit" class="btn btn-primary btn-full">
+          Iniciar sesión
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MAIN VIEW ──────────────────────────────────────────────────────────── -->
+  <div id="view-main" class="view">
+
+    <!-- Header -->
+    <div class="header">
+      <span class="logo">Kinetia</span>
+      <div class="header-right">
+        <span class="user-dot"></span>
+        <span id="user-email" class="user-email"></span>
+        <button id="btn-logout" class="btn btn-ghost" style="height:22px;padding:0 8px;font-size:10px;">
+          Salir
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="main-content">
+
+      <!-- Search -->
+      <div class="section">
+        <input
+          id="search"
+          type="search"
+          class="search-input"
+          placeholder="Buscar preset…"
+        />
+      </div>
+
+      <!-- Category pills -->
+      <div class="section">
+        <div id="category-pills" class="category-scroll"></div>
+      </div>
+
+      <!-- Preset list -->
+      <div class="section">
+        <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Presets</span>
+          <button id="btn-refresh" class="btn btn-ghost" style="height:20px;padding:0 8px;font-size:9px;">
+            ↻ Recargar
+          </button>
+        </div>
+        <div id="preset-list">
+          <div class="loading-row">Cargando…</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Selected preset detail -->
+      <div id="preset-detail" class="preset-detail">
+        <div class="section-title">Preset seleccionado</div>
+        <div id="detail-name" style="font-size:12px;font-weight:500;color:white"></div>
+        <div id="physics-grid" class="physics-grid"></div>
+      </div>
+
+      <!-- Target property -->
+      <div class="section">
+        <p class="section-title">Propiedad destino</p>
+        <select id="prop-select" class="prop-select">
+          <option value="position">Posición</option>
+          <option value="scale">Escala</option>
+          <option value="rotation">Rotación</option>
+          <option value="opacity">Opacidad</option>
+        </select>
+      </div>
+
+      <!-- Apply button -->
+      <div class="section">
+        <button id="btn-apply" class="btn btn-primary btn-full" disabled>
+          Aplicar a capa seleccionada
+        </button>
+        <button id="btn-remove" class="btn btn-danger btn-full" style="margin-top:4px">
+          Eliminar Kinetia de la capa
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span id="status-text">Listo.</span>
+    </div>
+
+  </div>
+
+  <script src="js/CSInterface.js"></script>
+  <script src="js/panel.js"></script>
+</body>
+</html>

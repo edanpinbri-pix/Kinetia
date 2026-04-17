@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { FeaturesCarousel } from "@/components/features-carousel/FeaturesCarousel";
 
-const SECTIONS = ["inicio", "funciones", "estudio"];
+const SECTIONS = ["inicio", "funciones", "ae-plugin"];
 
 export default function HomePage() {
   const [active, setActive] = useState(0);
@@ -34,7 +34,6 @@ export default function HomePage() {
       <nav className="border-b border-surface-border px-8 py-4 flex items-center justify-between sticky top-0 z-50 bg-surface/90 backdrop-blur-md">
         <span className="font-quinque text-xl text-gradient">Kinetia</span>
 
-        {/* Section arrows */}
         <div className="flex items-center gap-1">
           {SECTIONS.map((label, i) => (
             <button
@@ -45,7 +44,7 @@ export default function HomePage() {
                   ? "text-white bg-surface-card border border-surface-border"
                   : "text-zinc-500 hover:text-zinc-300"}`}
             >
-              {label}
+              {label === "ae-plugin" ? "Plugin AE" : label}
             </button>
           ))}
           <span className="w-px h-4 bg-surface-border mx-2" />
@@ -79,9 +78,9 @@ export default function HomePage() {
             <Link href="/presets" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
               <span className="text-zinc-600 mr-1">2.</span>Presets
             </Link>
-            <a href="#ae-plugin" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
+            <button onClick={() => scrollTo(2)} className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
               <span className="text-zinc-600 mr-1">3.</span>Plugin AE
-            </a>
+            </button>
           </nav>
         </div>
       </nav>
@@ -103,16 +102,16 @@ export default function HomePage() {
             <span className="text-gradient">del pensamiento</span>
           </h1>
           <p className="text-lg text-zinc-400 max-w-xl mx-auto mb-10 leading-relaxed">
-            Sube videos de referencia. Kinetia aprende tu estilo de movimiento, genera presets
-            inteligentes y exporta un proyecto 100% editable a After Effects.
+            Sube un video de referencia. Kinetia extrae la física del movimiento,
+            genera presets inteligentes y los aplica directamente en After Effects.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link href="/train" className="px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-lg font-medium transition-colors">
               Comenzar entrenamiento
             </Link>
-            <Link href="/presets" className="px-6 py-3 bg-surface-card hover:bg-surface-elevated text-white border border-surface-border rounded-lg font-medium transition-colors">
-              Ver presets
-            </Link>
+            <button onClick={() => scrollTo(2)} className="px-6 py-3 bg-surface-card hover:bg-surface-elevated text-white border border-surface-border rounded-lg font-medium transition-colors">
+              Descargar plugin AE
+            </button>
           </div>
         </div>
       </section>
@@ -130,7 +129,8 @@ export default function HomePage() {
               Todo lo que necesitas para animar mejor
             </h2>
             <p className="text-sm text-zinc-400 leading-relaxed">
-              Del video de referencia al export en After Effects — Kinetia maneja todo el pipeline de movimiento con IA en cada paso.
+              Del video de referencia al export en After Effects — Kinetia maneja todo el pipeline
+              de movimiento con IA en cada paso.
             </p>
           </div>
           <div className="flex-1 flex justify-center w-full overflow-hidden">
@@ -139,27 +139,99 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Studio CTA */}
+      {/* AE Plugin */}
       <section
-        id="estudio"
+        id="ae-plugin"
         ref={(el) => { sectionRefs.current[2] = el; }}
-        className="border-t border-surface-border px-8 py-20 min-h-[60vh] flex items-center justify-center"
+        className="border-t border-surface-border px-8 py-20 min-h-[70vh] flex items-center"
       >
-        <div className="max-w-2xl mx-auto text-center space-y-6">
-          <p className="text-xs font-medium text-brand-400 uppercase tracking-widest">Studio</p>
-          <h2 className="font-quinque text-3xl text-white leading-snug">
-            Listo para crear?
-          </h2>
-          <p className="text-sm text-zinc-400 leading-relaxed max-w-md mx-auto">
-            Crea tu cuenta y empieza a entrenar Kinetia con tus propios videos de referencia.
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link href="/register" className="px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-lg font-medium transition-colors">
-              Crear cuenta gratis
-            </Link>
-            <Link href="/login" className="px-6 py-3 bg-surface-card hover:bg-surface-elevated text-white border border-surface-border rounded-lg font-medium transition-colors">
-              Iniciar sesión
-            </Link>
+        <div className="max-w-4xl mx-auto w-full">
+          <div className="text-center mb-14">
+            <p className="text-xs font-medium text-brand-400 uppercase tracking-widest mb-3">Plugin</p>
+            <h2 className="font-quinque text-3xl text-white leading-snug mb-4">
+              Kinetia para After Effects
+            </h2>
+            <p className="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
+              Panel nativo que sincroniza tus presets y los aplica directamente a las capas
+              de tu composición — sin hornear keyframes.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            {/* Download card */}
+            <div className="glass rounded-2xl p-8 border border-surface-border flex flex-col gap-5">
+              <div>
+                <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-1">Descarga</p>
+                <h3 className="text-lg font-semibold text-white">kinetia.zxp</h3>
+                <p className="text-xs text-zinc-500 mt-1">After Effects 2022 · macOS &amp; Windows</p>
+              </div>
+
+              <a
+                href="https://github.com/kitifica/kinetia/releases/latest/download/kinetia.zxp"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Descargar plugin
+              </a>
+
+              <p className="text-[10px] text-zinc-600">
+                Instalar con{" "}
+                <a href="https://aescripts.com/zxpinstaller/" target="_blank" rel="noreferrer" className="text-brand-400 hover:text-brand-300">
+                  ZXP Installer
+                </a>
+                {" "}de aescripts.com
+              </p>
+            </div>
+
+            {/* Install steps */}
+            <div className="glass rounded-2xl p-8 border border-surface-border flex flex-col gap-4">
+              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Instalación</p>
+              <ol className="space-y-3">
+                {[
+                  { n: "1", text: "Descarga e instala ZXP Installer de aescripts.com" },
+                  { n: "2", text: "Arrastra kinetia.zxp a ZXP Installer" },
+                  { n: "3", text: "Reinicia After Effects" },
+                  { n: "4", text: "Abre: Window → Extensions → Kinetia" },
+                  { n: "5", text: "Inicia sesión con tu cuenta de Kinetia" },
+                ].map((step) => (
+                  <li key={step.n} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-brand-950/60 border border-brand-900 text-brand-400 text-[10px] font-medium flex items-center justify-center shrink-0 mt-0.5">
+                      {step.n}
+                    </span>
+                    <span className="text-sm text-zinc-400">{step.text}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+
+          {/* What it does */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              {
+                icon: "⚡",
+                title: "Sincronización en tiempo real",
+                desc: "Los presets generados en la web aparecen instantáneamente en el panel de AE.",
+              },
+              {
+                icon: "🎛️",
+                title: "Nodos editables",
+                desc: "Se crean sliders en el panel de Efectos: tensión, fricción, amplitud y más.",
+              },
+              {
+                icon: "🔢",
+                title: "Expresiones matemáticas",
+                desc: "No keyframes. Física pura en JS que AE evalúa en tiempo real.",
+              },
+            ].map((item) => (
+              <div key={item.title} className="glass rounded-xl p-5 border border-surface-border">
+                <span className="text-2xl mb-3 block">{item.icon}</span>
+                <h4 className="text-sm font-semibold text-white mb-1">{item.title}</h4>
+                <p className="text-xs text-zinc-500 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
