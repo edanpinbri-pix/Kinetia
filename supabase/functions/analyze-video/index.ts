@@ -1,229 +1,176 @@
 /**
- * Supabase Edge Function: analyze-video
- * Receives video frames (base64) from the browser,
- * sends them to Claude Vision, returns a MicroJSON preset.
- *
- * Called by: apps/web after client-side frame extraction
+ * Supabase Edge Function: analyze-video (v2)
+ * Receives: frames (base64) + isolationPrompt + presetId
+ * Claude Vision isolates the target element, extracts physics,
+ * generates AE expression template, saves to physics_presets.
  */
 
 import Anthropic from "npm:@anthropic-ai/sdk@0.36.3";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { v4 as uuidv4 } from "npm:uuid@11";
 
 const anthropic = new Anthropic({ apiKey: Deno.env.get("ANTHROPIC_API_KEY")! });
 
-const MICRO_JSON_SCHEMA = `{
-  "version": "1.0.0",
-  "id": "<uuid>",
-  "meta": {
-    "name": "<string>",
-    "description": "<string>",
-    "category": "entrance|exit|emphasis|transition|loop|text-reveal|kinetic-typography|logo-intro|custom",
-    "tags": ["<string>"],
-    "duration": <number_ms>,
-    "fps": <number>,
-    "thumbnailUrl": "",
-    "createdAt": "<iso_date>",
-    "confidence": <0_to_1>
-  },
-  "targetConstraints": {
-    "layerTypes": ["text"|"vector"|"image"|"shape"|"group"],
-    "requiresCenterAnchor": <boolean>
-  },
-  "tracks": [
-    {
-      "property": "position.x|position.y|scale.uniform|rotation|opacity",
-      "keyframes": [
-        {
-          "time": <ms_from_start>,
-          "value": <normalized_0_to_1>,
-          "easing": {
-            "type": "linear|easeOutCubic|easeOutElastic|easeOutBounce|easeInOutQuad|custom",
-            "bezier": [<cx1>,<cy1>,<cx2>,<cy2>]
-          }
-        }
-      ]
-    }
-  ],
-  "physics": {
-    "tension": <0_to_1>,
-    "friction": <0_to_1>,
-    "mass": <0.1_to_10>,
-    "bounciness": <0_to_1>,
-    "velocityDecay": <0_to_1>,
-    "randomness": <0_to_1>
-  }
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, content-type, x-client-info, apikey",
+};
+
+const PHYSICS_SCHEMA = `{
+  "type": "spring|bounce|inertia|ease",
+  "tension": <0_to_1>,
+  "friction": <0_to_1>,
+  "mass": <0.1_to_10>,
+  "amplitude": <pixels_max_displacement>,
+  "frequency": <Hz_oscillation>,
+  "decay": <0_to_1_exponential_decay>,
+  "easing": { "bezier": [<cx1>, <cy1>, <cx2>, <cy2>] }
 }`;
 
-const ANALYSIS_PROMPT = `You are a motion analysis expert for the Kinetia animation system.
+function buildAnalysisPrompt(frameCount: number, isolationPrompt: string): string {
+  return `You are a motion physics expert for the Kinetia animation system.
 
-Analyze the ${"{frameCount}"} sequential video frames provided and extract the motion skeleton.
+TARGET ELEMENT TO ANALYZE:
+"${isolationPrompt}"
+
+Analyze the ${frameCount} sequential video frames provided.
 
 YOUR TASK:
-1. Identify what elements are moving (text, vector/logo, image)
-2. Track their position, scale, rotation, and opacity changes across frames
-3. Identify the easing curve type (ease-out cubic, elastic, bounce, etc.)
-4. Detect physics characteristics: spring tension, friction, bounciness, mass
-5. Generate a MicroJSON preset that captures this "movement skeleton"
+1. Isolate ONLY the element described in the target prompt above
+2. Track its movement (position, scale, rotation, opacity) across frames
+3. Extract the mathematical physics skeleton:
+   - Spring tension (how stiff/rigid the motion is: 0=loose, 1=rigid)
+   - Friction/damping (how fast oscillation dies: 0=no damping, 1=overdamped)
+   - Mass (inertia — how heavy the motion feels: 0.1=feather, 10=boulder)
+   - Amplitude (max displacement from rest position in pixels, estimate from visual scale)
+   - Frequency (oscillation frequency in Hz, 0 if no oscillation)
+   - Decay (exponential decay rate: 0=infinite, 1=instant stop)
+   - Easing bezier (cubic bezier control points approximating the motion curve)
+4. Generate the After Effects expression template for this physics
 
-RULES:
-- Focus on the MATHEMATICAL STRUCTURE of the motion, not pixel content
-- Normalize all values to 0-1 range (they will be mapped to actual AE ranges at apply time)
-- Include 4-12 keyframes per track (use Douglas-Peucker simplification mentally)
-- time values are in milliseconds from start
-- confidence: how confident you are in the extraction (0-1)
+OUTPUT: Return ONLY valid JSON with this exact structure:
+{
+  "physics": ${PHYSICS_SCHEMA},
+  "expressionTemplate": "<javascript_string_for_ae_expression>",
+  "category": "entrance|exit|bounce|inertia|loop|custom",
+  "durationMs": <number>,
+  "confidence": <0_to_1>
+}
 
-OUTPUT: Return ONLY valid JSON matching this schema exactly:
-${MICRO_JSON_SCHEMA}
+The expressionTemplate must be a valid After Effects JavaScript expression string.
+Use these AE expression variables: time, thisComp, value, thisLayer
+Use pseudo effect controls named: "Kinetia: Tensión", "Kinetia: Fricción", "Kinetia: Amplitud", "Kinetia: Decaimiento"
 
-No explanation. No code blocks. Pure JSON only.`;
+Example template for spring position:
+"var t = time - thisLayer.inPoint;\\nvar tension = effect(\\"Kinetia: Tensión\\")(\\"Slider\\").value;\\nvar friction = effect(\\"Kinetia: Fricción\\")(\\"Slider\\").value;\\nvar amplitude = effect(\\"Kinetia: Amplitud\\")(\\"Slider\\").value;\\nvar decay = effect(\\"Kinetia: Decaimiento\\")(\\"Slider\\").value;\\nif (t <= 0) { value; } else {\\n  var w = Math.sqrt(tension) * (1 - friction * friction);\\n  var spring = amplitude * Math.exp(-friction * decay * t) * Math.cos(w * 2 * Math.PI * t);\\n  value + [0, spring];\\n}"
+
+No explanation. No markdown. Pure JSON only.`;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "authorization, content-type, x-client-info, apikey",
-      },
-    });
+    return new Response(null, { headers: CORS });
   }
 
   try {
-    const { frames, frameCount, fps, jobId, userId, presetName } = await req.json() as {
-      frames: string[];       // base64 PNG frames
+    const {
+      frames, frameCount, fps,
+      presetId, userId, presetName, isolationPrompt,
+    } = await req.json() as {
+      frames: string[];
       frameCount: number;
       fps: number;
-      jobId: string;
+      presetId: string;
       userId: string;
       presetName?: string;
+      isolationPrompt: string;
     };
 
-    if (!frames?.length) {
-      return Response.json({ error: "No frames provided" }, { status: 400 });
+    if (!frames?.length || !presetId || !isolationPrompt) {
+      return Response.json({ error: "frames, presetId, isolationPrompt required" }, { status: 400, headers: CORS });
     }
 
-    // Init Supabase admin client for DB writes
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Update job: processing
-    await supabase
-      .from("training_jobs")
-      .update({ status: "processing", progress: 10 })
-      .eq("id", jobId);
-
-    // Build Claude Vision message — send up to 10 frames (API limit aware)
+    // Build image blocks — send up to 10 frames
     const validFrames = frames.filter((f) => f && f.length > 100);
     if (!validFrames.length) {
-      return Response.json({ error: "No valid frames extracted from video" }, { status: 400 });
+      return Response.json({ error: "No valid frames" }, { status: 400, headers: CORS });
     }
     const maxFrames = Math.min(validFrames.length, 10);
     const step = Math.max(1, Math.floor(validFrames.length / maxFrames));
-    const selectedFrames = validFrames.filter((_, i) => i % step === 0).slice(0, maxFrames);
+    const selected = validFrames.filter((_, i) => i % step === 0).slice(0, maxFrames);
 
-    const imageBlocks = selectedFrames.map((base64) => ({
+    const imageBlocks = selected.map((base64) => ({
       type: "image" as const,
-      source: {
-        type: "base64" as const,
-        media_type: "image/png" as const,
-        data: base64,
-      },
+      source: { type: "base64" as const, media_type: "image/jpeg" as const, data: base64 },
     }));
-
-    await supabase
-      .from("training_jobs")
-      .update({ progress: 30 })
-      .eq("id", jobId);
 
     // Call Claude Vision
     const message = await anthropic.messages.create({
       model: "claude-opus-4-6",
-      max_tokens: 4096,
-      messages: [
-        {
-          role: "user",
-          content: [
-            ...imageBlocks,
-            {
-              type: "text",
-              text: ANALYSIS_PROMPT.replace("{frameCount}", String(selectedFrames.length)),
-            },
-          ],
-        },
-      ],
+      max_tokens: 2048,
+      messages: [{
+        role: "user",
+        content: [
+          ...imageBlocks,
+          { type: "text", text: buildAnalysisPrompt(selected.length, isolationPrompt) },
+        ],
+      }],
     });
 
-    await supabase
-      .from("training_jobs")
-      .update({ progress: 75 })
-      .eq("id", jobId);
-
-    // Parse response
     const rawText = message.content
       .filter((b) => b.type === "text")
       .map((b) => (b as { type: "text"; text: string }).text)
       .join("");
 
-    let preset: Record<string, unknown>;
+    // Parse AI response
+    let result: {
+      physics: Record<string, unknown>;
+      expressionTemplate: string;
+      category: string;
+      durationMs: number;
+      confidence: number;
+    };
+
     try {
-      // Extract JSON from response (handles any surrounding text)
-      const jsonMatch = rawText.match(/\{[\s\S]+\}/);
-      if (!jsonMatch) throw new Error("No JSON found in response");
-      preset = JSON.parse(jsonMatch[0]);
+      const match = rawText.match(/\{[\s\S]+\}/);
+      if (!match) throw new Error("No JSON in response");
+      result = JSON.parse(match[0]);
     } catch {
       await supabase
-        .from("training_jobs")
+        .from("physics_presets")
         .update({ status: "failed", error_message: "Failed to parse Claude response" })
-        .eq("id", jobId);
-      return Response.json({ error: "Failed to parse AI response" }, { status: 500 });
+        .eq("id", presetId);
+      return Response.json({ error: "Failed to parse AI response" }, { status: 500, headers: CORS });
     }
 
-    // Assign a proper ID and name
-    preset.id = uuidv4();
-    if (presetName && preset.meta) {
-      (preset.meta as Record<string, unknown>).name = presetName;
-    }
-
-    // Save preset to DB
-    const { data: savedPreset, error: presetError } = await supabase
-      .from("presets")
-      .insert({
-        user_id: userId,
-        name: (preset.meta as Record<string, unknown>)?.name ?? "Untitled Preset",
-        category: (preset.meta as Record<string, unknown>)?.category ?? "custom",
-        tags: (preset.meta as Record<string, unknown>)?.tags ?? [],
-        micro_json: preset,
-        confidence: (preset.meta as Record<string, unknown>)?.confidence ?? 0,
-        duration: (preset.meta as Record<string, unknown>)?.duration ?? 0,
-      })
-      .select()
-      .single();
-
-    if (presetError) throw presetError;
-
-    // Mark job complete
-    await supabase
-      .from("training_jobs")
+    // Save to physics_presets
+    const { error: updateErr } = await supabase
+      .from("physics_presets")
       .update({
-        status: "completed",
-        progress: 100,
-        result_preset_id: savedPreset.id,
-        completed_at: new Date().toISOString(),
+        name: presetName ?? "Preset sin nombre",
+        category: result.category ?? "custom",
+        physics: result.physics,
+        expression_template: result.expressionTemplate ?? "",
+        duration_ms: result.durationMs ?? 1000,
+        fps: fps ?? 30,
+        confidence: result.confidence ?? 0,
+        status: "ready",
       })
-      .eq("id", jobId);
+      .eq("id", presetId);
 
-    return Response.json(
-      { preset: savedPreset },
-      { headers: { "Access-Control-Allow-Origin": "*" } }
-    );
+    if (updateErr) throw updateErr;
+
+    return Response.json({ presetId, status: "ready" }, { headers: CORS });
 
   } catch (err) {
     console.error("[analyze-video]", err);
     return Response.json(
       { error: err instanceof Error ? err.message : "Unknown error" },
-      { status: 500, headers: { "Access-Control-Allow-Origin": "*" } }
+      { status: 500, headers: CORS }
     );
   }
 });
