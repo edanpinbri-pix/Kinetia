@@ -39,7 +39,7 @@ export function AppHeader({ title, subtitle, actions }: Props) {
           <Link href="/presets" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
             <span className="text-zinc-600 mr-1">2.</span>Presets
           </Link>
-          <a href="#ae-plugin" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
+          <a href="/#ae-plugin" className="text-xs text-zinc-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-surface-card">
             <span className="text-zinc-600 mr-1">3.</span>Plugin AE
           </a>
         </nav>

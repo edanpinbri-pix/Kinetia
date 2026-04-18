@@ -41,7 +41,7 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.replace("/projects");
+      router.replace("/train");
     }
   }
 

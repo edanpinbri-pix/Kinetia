@@ -145,7 +145,7 @@ export default function TrainPage() {
 
   return (
     <main className="min-h-screen bg-surface">
-      <AppHeader title="Entrenar IA" subtitle="Sube un video de referencia para generar un preset de física" />
+      <AppHeader title="Entrenar IA" subtitle="Video + prompt → Claude extrae la física → preset listo en AE" />
 
       <div className="max-w-2xl mx-auto px-8 py-12">
         {(status === "idle" || status === "error") ? (
@@ -254,20 +254,26 @@ export default function TrainPage() {
             )}
 
             {status === "done" && (
-              <div className="flex gap-3 justify-center">
-                <a
-                  href="/presets"
-                  className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors"
-                >
-                  Ver en biblioteca →
-                </a>
-                <button
-                  onClick={() => { setStatus("idle"); setFile(null); setIsolationPrompt(""); setPresetName(""); setPresetId(null); }}
-                  className="px-6 py-2.5 border border-surface-border text-zinc-400 hover:text-white text-sm font-medium rounded-lg transition-colors"
-                >
-                  Analizar otro
-                </button>
-              </div>
+              <>
+                <div className="flex gap-3 justify-center">
+                  <a
+                    href="/presets"
+                    className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg transition-colors"
+                  >
+                    Ver en biblioteca →
+                  </a>
+                  <button
+                    onClick={() => { setStatus("idle"); setFile(null); setIsolationPrompt(""); setPresetName(""); setPresetId(null); }}
+                    className="px-6 py-2.5 border border-surface-border text-zinc-400 hover:text-white text-sm font-medium rounded-lg transition-colors"
+                  >
+                    Analizar otro
+                  </button>
+                </div>
+                <p className="text-xs text-zinc-600 pt-2">
+                  Abre el panel <span className="text-zinc-500">Window → Extensions → Kinetia</span> en AE para aplicarlo.{" "}
+                  <a href="/#ae-plugin" className="text-brand-400 hover:text-brand-300">¿No tienes el plugin?</a>
+                </p>
+              </>
             )}
           </div>
         )}

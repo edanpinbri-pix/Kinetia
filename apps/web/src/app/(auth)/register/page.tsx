@@ -42,7 +42,7 @@ export default function RegisterPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      router.push("/projects");
+      router.push("/train");
       router.refresh();
     }
   }

@@ -73,11 +73,17 @@ export default function PresetsPage() {
     <main className="min-h-screen bg-surface">
       <AppHeader
         title="Biblioteca de Presets"
-        subtitle={`${list.length} preset${list.length !== 1 ? "s" : ""}`}
+        subtitle={`${list.length} preset${list.length !== 1 ? "s" : ""} · listos para After Effects`}
         actions={
-          <a href="/train" className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors">
-            + Entrenar
-          </a>
+          <div className="flex items-center gap-2">
+            <a href="/#ae-plugin" className="text-xs text-zinc-400 hover:text-white border border-surface-border px-3 py-1.5 rounded-md transition-colors hidden md:inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-400"></span>
+              Plugin AE
+            </a>
+            <a href="/train" className="text-sm bg-brand-600 hover:bg-brand-500 text-white px-4 py-1.5 rounded-md transition-colors">
+              + Entrenar
+            </a>
+          </div>
         }
       />
 
@@ -121,10 +127,10 @@ export default function PresetsPage() {
                 ))}
               </div>
             ) : list.length === 0 ? (
-              <div className="text-center py-24">
-                <p className="text-zinc-500 text-sm">Sin presets.</p>
-                <a href="/train" className="text-brand-400 text-sm hover:text-brand-300 mt-2 inline-block">
-                  Entrenar el primero →
+              <div className="text-center py-24 space-y-2">
+                <p className="text-zinc-500 text-sm">Sin presets en esta categoría.</p>
+                <a href="/train" className="text-brand-400 text-sm hover:text-brand-300 inline-block">
+                  Generar el primero →
                 </a>
               </div>
             ) : (
@@ -197,6 +203,12 @@ export default function PresetsPage() {
               >
                 {copyMsg ? "¡Copiado!" : "Copiar expresión AE"}
               </button>
+              <p className="text-[10px] text-zinc-600 text-center pt-1">
+                O aplícalo desde{" "}
+                <a href="/#ae-plugin" className="text-brand-400 hover:text-brand-300">
+                  Window → Extensions → Kinetia
+                </a>
+              </p>
             </aside>
           )}
         </div>
